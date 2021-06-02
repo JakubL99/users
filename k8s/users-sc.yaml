@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: auth-users-postgres
+  namespace: micro
+  labels:
+    app: users
+type: Opaque
+stringData:
+  DB_PASSWORD: admin123
+  DB_USER: postgresadmin

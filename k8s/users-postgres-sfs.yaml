@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: users-postgres
+  namespace: micro
+spec:
+  serviceName: users-postgres
+  selector:
+    matchLabels:
+      app: users-postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: users-postgres
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: users-postgres
+        image: postgres
+        ports:
+        - name: users-postgres
+          containerPort: 5432
+        envFrom:
+          - configMapRef:
+              name: postgres-config
+          - secretRef:
+              name: users-postgres-auth
+        volumeMounts:
+        - name: users-postgres
+          mountPath: /data/db
+      volumes:
+      - name: users-postgres
+        persistentVolumeClaim:
+          claimName: users-postgres

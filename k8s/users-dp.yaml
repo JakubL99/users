@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  namespace: micro
+  labels:
+    project: micro
+    micro: service
+    name: users
+    version: latest
+spec:
+  selector:
+    matchLabels:
+      micro: service
+      name: users
+      version: latest
+  template:
+    metadata:
+      labels:
+        project: micro
+        micro: service
+        name: users
+        version: latest
+    spec:
+      tolerations:
+        - key: "project"
+          operator: "Equal"
+          value: "micro"
+          effect: "NoSchedule"
+      containers:
+      - name: users
+        image: lis689/users:3.1
+        ports:
+        - containerPort: 443
+        env:
+          - name: "MICRO_API_ADDRESS" 
+            value: "443"
+          - name: "MICRO_PROXY"
+            value: "network.micro.svc.cluster.local:8443"
+          - name: "MICRO_SERVER_IMAGE"
+            value: "micro/micro:latest"
+          - name: "MICRO_SERVICE_ADDRESS"
+            value: ":8080"
+        envFrom:
+          - secretRef:
+              name: api-latest
+          - secretRef:
+              name: auth-users-postgres
+          - configMapRef:
+              name: users-postgres

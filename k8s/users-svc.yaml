@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: users
+  namespace: micro
+spec:
+  selector:
+    micro: service
+    name: users
+    version: latest
+  ports:
+  - port: 8080
+    targetPort: 8080
